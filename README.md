@@ -2,8 +2,6 @@
 
 > A browser-based 3D hypercar configurator with real-time hand tracking and gesture-controlled camera interaction.
 
-[![Live Demo](https://img.shields.io/badge/Live-Demo-black?style=for-the-badge)](https://vls-amit.github.io/obsidian-garage/)
-[![React](https://img.shields.io/badge/React-19-61DAFB?style=for-the-badge&logo=react&logoColor=black)](https://react.dev/)
 [![Three.js](https://img.shields.io/badge/Three.js-3D-black?style=for-the-badge&logo=three.js&logoColor=white)](https://threejs.org/)
 [![MediaPipe](https://img.shields.io/badge/MediaPipe-Computer%20Vision-4285F4?style=for-the-badge)](https://ai.google.dev/edge/mediapipe/solutions/guide)
 
