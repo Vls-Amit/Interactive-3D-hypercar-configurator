@@ -1,16 +1,137 @@
-# React + Vite
+# Interactive 3D Hypercar Configurator
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+> A browser-based 3D hypercar configurator with real-time hand tracking and gesture-controlled camera interaction.
 
-Currently, two official plugins are available:
+[![Live Demo](https://img.shields.io/badge/Live-Demo-black?style=for-the-badge)](https://vls-amit.github.io/obsidian-garage/)
+[![React](https://img.shields.io/badge/React-19-61DAFB?style=for-the-badge&logo=react&logoColor=black)](https://react.dev/)
+[![Three.js](https://img.shields.io/badge/Three.js-3D-black?style=for-the-badge&logo=three.js&logoColor=white)](https://threejs.org/)
+[![MediaPipe](https://img.shields.io/badge/MediaPipe-Computer%20Vision-4285F4?style=for-the-badge)](https://ai.google.dev/edge/mediapipe/solutions/guide)
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+---
 
-## React Compiler
+## Live Demo
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+### 🚗 [Launch Obsidian Garage](https://vls-amit.github.io/obsidian-garage/)
 
-## Expanding the ESLint configuration
+Explore the car using traditional mouse controls or interact with the 3D scene using real-time hand gestures through your webcam.
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+> **Note:** Hand-tracking features require webcam permission and a modern browser.
+
+---
+
+## Overview
+
+**Obsidian Garage** is an interactive browser-based 3D automotive experience that combines real-time computer vision with WebGL rendering.
+
+The application presents a detailed hypercar inside a virtual garage and allows users to inspect the vehicle using traditional mouse controls or webcam-based hand gestures.
+
+The project combines:
+
+- Real-time hand tracking
+- Gesture recognition
+- 3D rendering
+- Interactive camera control
+- GLB/GLTF model loading
+- Dynamic material manipulation
+- Responsive web UI
+- Browser-based computer vision
+
+The goal was to explore how computer vision can be used as an alternative input mechanism for an interactive 3D web application.
+
+---
+
+# ✨ Features
+
+## 🏎️ Interactive 3D Car Viewer
+
+- Real-time 3D rendering using Three.js
+- React-based scene management with React Three Fiber
+- GLB model loading
+- Interactive camera controls
+- Smooth camera transitions
+- Detailed automotive materials
+
+## 🖐️ Real-Time Hand Tracking
+
+The application uses **MediaPipe Hand Landmarker** to detect hand landmarks from the user's webcam.
+
+The system tracks hand position and derives interaction parameters from the detected landmarks.
+
+### Supported interactions
+
+| Gesture / Movement | Action |
+|---|---|
+| Move hand horizontally | Rotate camera horizontally |
+| Move hand vertically | Rotate camera vertically |
+| Move hand closer | Zoom in |
+| Move hand farther away | Zoom out |
+| Make a fist | Enter reset state |
+| Open hand after fist | Reset camera |
+
+---
+
+## 🎨 Dynamic Car Configuration
+
+The application supports changing the vehicle's body paint while preserving the appearance of other vehicle components.
+
+The renderer distinguishes between different material groups such as:
+
+- Body paint
+- Glass
+- Wheels
+- Lights
+- Carbon fiber
+- Interior components
+
+This allows the body material to be modified without affecting unrelated parts of the model.
+
+---
+
+## 📷 Webcam HUD
+
+When hand tracking is enabled, the interface provides visual feedback from the webcam including:
+
+- Hand landmarks
+- Detected hand state
+- Gesture state
+- Camera interaction status
+
+This makes the computer-vision pipeline visible to the user instead of treating it as a hidden input system.
+
+---
+
+# 🧠 How It Works
+
+The application can be viewed as four major stages:
+
+```text
+              ┌───────────────┐
+              │    Webcam     │
+              └───────┬───────┘
+                      │
+                      ▼
+            ┌───────────────────┐
+            │ MediaPipe Hand    │
+            │    Landmarker     │
+            └────────┬──────────┘
+                     │
+                     ▼
+            ┌───────────────────┐
+            │  Hand Landmarks   │
+            │    21 points      │
+            └────────┬──────────┘
+                     │
+                     ▼
+            ┌───────────────────┐
+            │ Gesture Processing │
+            └────────┬──────────┘
+                     │
+                     ▼
+            ┌───────────────────┐
+            │ Camera Controller │
+            └────────┬──────────┘
+                     │
+                     ▼
+            ┌───────────────────┐
+            │   Three.js Scene  │
+            └───────────────────┘
