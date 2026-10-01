@@ -9,6 +9,13 @@ const CONNECTIONS = [
   [0, 17],                                  // palm base
 ];
 
+// Map a score (0–1) to a confidence color
+function getConfidenceColor(score) {
+  if (score >= 0.8) return "#00e676";   // green — strong
+  if (score >= 0.6) return "#ffca28";   // yellow — moderate
+  return "#ef5350";                      // red — weak
+}
+
 export default function WebcamFeed({ videoRef, resultsRef, ready, gestureRef }) {
   const canvasRef = useRef(null);
 
@@ -36,15 +43,34 @@ export default function WebcamFeed({ videoRef, resultsRef, ready, gestureRef }) 
 
       // Draw hand landmarks for all detected hands
       const results = resultsRef.current;
+      let avgConfidence = null;
+
       if (results?.landmarks) {
+        // Compute average hand confidence from world landmarks or handedness score
+        if (results.handedness?.length > 0) {
+          let totalScore = 0;
+          let count = 0;
+          for (const hand of results.handedness) {
+            if (hand[0]?.score) {
+              totalScore += hand[0].score;
+              count++;
+            }
+          }
+          if (count > 0) avgConfidence = totalScore / count;
+        }
+
+        const skeletonColor = avgConfidence !== null
+          ? getConfidenceColor(avgConfidence)
+          : "#00e5ff";
+
         for (const lm of results.landmarks) {
           const w = canvas.width;
           const h = canvas.height;
 
-          // Draw connections
-          ctx.strokeStyle = "#00e5ff";
+          // Draw connections — color based on confidence
+          ctx.strokeStyle = skeletonColor;
           ctx.lineWidth = 2;
-          ctx.shadowColor = "#00e5ff";
+          ctx.shadowColor = skeletonColor;
           ctx.shadowBlur = 6;
           for (const [a, b] of CONNECTIONS) {
             ctx.beginPath();
@@ -61,13 +87,15 @@ export default function WebcamFeed({ videoRef, resultsRef, ready, gestureRef }) 
             const py = point.y * h;
 
             const isTip = [4, 8, 12, 16, 20].includes(i);
-            ctx.fillStyle = isTip ? "#00b0ff" : "#0091ea";
+            ctx.fillStyle = isTip ? skeletonColor : skeletonColor;
+            ctx.globalAlpha = isTip ? 1.0 : 0.7;
             ctx.beginPath();
             ctx.arc(px, py, isTip ? 6 : 3, 0, Math.PI * 2);
             ctx.fill();
+            ctx.globalAlpha = 1.0;
 
             if (isTip) {
-              ctx.strokeStyle = "rgba(0, 176, 255, 0.4)";
+              ctx.strokeStyle = skeletonColor.replace(")", ", 0.4)").replace("rgb", "rgba");
               ctx.lineWidth = 1;
               ctx.beginPath();
               ctx.arc(px, py, 10, 0, Math.PI * 2);
@@ -93,13 +121,25 @@ export default function WebcamFeed({ videoRef, resultsRef, ready, gestureRef }) 
         statusColor = "#81c784";
       }
 
-      ctx.fillStyle = "rgba(0, 0, 0, 0.6)";
-      ctx.fillRect(0, canvas.height - 24, canvas.width, 24);
+      // ── Bottom HUD bar ──
+      ctx.fillStyle = "rgba(0, 0, 0, 0.65)";
+      ctx.fillRect(0, canvas.height - 28, canvas.width, 28);
 
+      // Gesture label (left-aligned)
       ctx.font = "bold 11px sans-serif";
       ctx.fillStyle = statusColor;
-      ctx.textAlign = "center";
-      ctx.fillText(statusText, canvas.width / 2, canvas.height - 8);
+      ctx.textAlign = "left";
+      ctx.fillText(statusText, 8, canvas.height - 9);
+
+      // Confidence score (right-aligned)
+      if (avgConfidence !== null) {
+        const confPct = Math.round(avgConfidence * 100);
+        const confColor = getConfidenceColor(avgConfidence);
+        ctx.font = "bold 11px sans-serif";
+        ctx.fillStyle = confColor;
+        ctx.textAlign = "right";
+        ctx.fillText(`TRACK: ${confPct}%`, canvas.width - 8, canvas.height - 9);
+      }
 
       frameId = requestAnimationFrame(draw);
     };

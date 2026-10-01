@@ -36,7 +36,7 @@ export default function Car({ bodyColor = null }) {
           mat.metalness = Math.max(mat.metalness ?? 0.4, 0.45);
         } else {
           // Non-paint parts: keep original look, just gentle env reflection
-            if ("envMapIntensity" in mat) {
+          if ("envMapIntensity" in mat) {
             mat.envMapIntensity = Math.min(mat.envMapIntensity ?? 1, 0.8);
           }
         }
@@ -61,3 +61,4 @@ export default function Car({ bodyColor = null }) {
 }
 
 useGLTF.preload(`${import.meta.env.BASE_URL}models/car.glb`);
+
