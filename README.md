@@ -1,135 +1,114 @@
 # Interactive 3D Hypercar Configurator
 
-> A browser-based 3D hypercar configurator with real-time hand tracking and gesture-controlled camera interaction.
+> An interactive 3D hypercar experience built with React, Three.js, React Three Fiber, MediaPipe, and GSAP, featuring real-time hand tracking and gesture-controlled camera interaction.
 
-[![Three.js](https://img.shields.io/badge/Three.js-3D-black?style=for-the-badge&logo=three.js&logoColor=white)](https://threejs.org/)
-[![MediaPipe](https://img.shields.io/badge/MediaPipe-Computer%20Vision-4285F4?style=for-the-badge)](https://ai.google.dev/edge/mediapipe/solutions/guide)
-
----
-
-## Live Demo
-
-### 🚗 [Launch Obsidian Garage](https://vls-amit.github.io/obsidian-garage/)
-
-Explore the car using traditional mouse controls or interact with the 3D scene using real-time hand gestures through your webcam.
-
-> **Note:** Hand-tracking features require webcam permission and a modern browser.
+[![Live Demo](https://img.shields.io/badge/Live-Demo-brightgreen)](https://vls-amit.github.io/Interactive-3D-hypercar-configurator/)
+[![React](https://img.shields.io/badge/React-19-61DAFB?logo=react)](https://react.dev/)
+[![Three.js](https://img.shields.io/badge/Three.js-WebGL-black?logo=three.js)](https://threejs.org/)
+[![MediaPipe](https://img.shields.io/badge/MediaPipe-Hand%20Tracking-FF6F00)](https://ai.google.dev/edge/mediapipe/solutions/guide)
+[![Vite](https://img.shields.io/badge/Vite-Fast%20Builds-646CFF?logo=vite)](https://vite.dev/)
 
 ---
 
-## Overview
+## 🚗 Live Demo
 
-**Obsidian Garage** is an interactive browser-based 3D automotive experience that combines real-time computer vision with WebGL rendering.
+**[Launch the Interactive Hypercar Configurator](https://vls-amit.github.io/Interactive-3D-hypercar-configurator/)**
 
-The application presents a detailed hypercar inside a virtual garage and allows users to inspect the vehicle using traditional mouse controls or webcam-based hand gestures.
+> Allow camera access to experience the gesture-controlled interaction.
+
+---
+
+## 📌 Overview
+
+**Interactive 3D Hypercar Configurator** is a browser-based 3D experience that combines real-time computer vision with interactive WebGL rendering.
+
+The application allows users to explore a detailed 3D hypercar, interact with the camera using hand gestures, change the vehicle's appearance, and control the experience through a webcam.
 
 The project combines:
 
+- 3D rendering
 - Real-time hand tracking
 - Gesture recognition
-- 3D rendering
-- Interactive camera control
-- GLB/GLTF model loading
-- Dynamic material manipulation
-- Responsive web UI
-- Browser-based computer vision
+- Camera control
+- Interactive materials
+- Animation
+- Computer vision
+- Web-based graphics
 
-The goal was to explore how computer vision can be used as an alternative input mechanism for an interactive 3D web application.
+The goal was to experiment with bringing **natural human interaction into a 3D web environment** without requiring a mouse or keyboard for the primary interaction.
 
 ---
 
-# ✨ Features
+## ✨ Features
 
-## 🏎️ Interactive 3D Car Viewer
+### 🏎️ Interactive 3D Hypercar
 
-- Real-time 3D rendering using Three.js
-- React-based scene management with React Three Fiber
-- GLB model loading
-- Interactive camera controls
+- Real-time 3D vehicle rendering
+- Detailed exterior model
+- Interactive camera
+- Dynamic lighting
+- Reflections and shadows
+- Post-processing effects
 - Smooth camera transitions
-- Detailed automotive materials
 
-## 🖐️ Real-Time Hand Tracking
+### ✋ Real-Time Hand Tracking
 
-The application uses **MediaPipe Hand Landmarker** to detect hand landmarks from the user's webcam.
+The application uses **MediaPipe Hand Landmarker** to detect hand landmarks through the webcam.
 
-The system tracks hand position and derives interaction parameters from the detected landmarks.
+The detected hand position is processed in real time and converted into camera interactions.
 
-### Supported interactions
+### 🎮 Gesture-Based Camera Control
 
-| Gesture / Movement | Action |
+Users can interact with the 3D environment using their hand.
+
+| Gesture / Movement | Interaction |
 |---|---|
-| Move hand horizontally | Rotate camera horizontally |
-| Move hand vertically | Rotate camera vertically |
-| Move hand closer | Zoom in |
-| Move hand farther away | Zoom out |
-| Make a fist | Enter reset state |
-| Open hand after fist | Reset camera |
+| Move palm | Rotate camera |
+| Open hand | Normal interaction |
+| Fist | Reset camera |
+| Hand movement | Control viewing direction |
+| Camera interaction | Explore the vehicle |
 
----
+The gesture system is designed to make the 3D experience feel more natural and immersive.
 
-## 🎨 Dynamic Car Configuration
+### 🎨 Dynamic Vehicle Configuration
 
-The application supports changing the vehicle's body paint while preserving the appearance of other vehicle components.
+The configurator supports changing the vehicle's appearance through interactive controls.
 
-The renderer distinguishes between different material groups such as:
+Vehicle materials are updated dynamically without reloading the 3D scene.
 
-- Body paint
-- Glass
-- Wheels
-- Lights
-- Carbon fiber
-- Interior components
+### 📷 Webcam HUD
 
-This allows the body material to be modified without affecting unrelated parts of the model.
+A webcam interface displays:
 
----
+- Live camera feed
+- Detected hand landmarks
+- Tracking status
+- Gesture interaction feedback
 
-## 📷 Webcam HUD
+This makes the computer-vision system visible rather than treating it as a hidden background process.
 
-When hand tracking is enabled, the interface provides visual feedback from the webcam including:
+### 🖱️ Fallback Controls
 
-- Hand landmarks
-- Detected hand state
-- Gesture state
-- Camera interaction status
-
-This makes the computer-vision pipeline visible to the user instead of treating it as a hidden input system.
+Traditional mouse-based controls are available so the 3D model can still be explored when hand tracking is unavailable.
 
 ---
 
 # 🧠 How It Works
 
-The application can be viewed as four major stages:
+The application follows a pipeline:
 
 ```text
-              ┌───────────────┐
-              │    Webcam     │
-              └───────┬───────┘
-                      │
-                      ▼
-            ┌───────────────────┐
-            │ MediaPipe Hand    │
-            │    Landmarker     │
-            └────────┬──────────┘
-                     │
-                     ▼
-            ┌───────────────────┐
-            │  Hand Landmarks   │
-            │    21 points      │
-            └────────┬──────────┘
-                     │
-                     ▼
-            ┌───────────────────┐
-            │ Gesture Processing │
-            └────────┬──────────┘
-                     │
-                     ▼
-            ┌───────────────────┐
-            │ Camera Controller │
-            └────────┬──────────┘
-                     │
-                     ▼
-            ┌───────────────────┐
-            │   Three.js Scene  │
-            └───────────────────┘
+Webcam
+   ↓
+MediaPipe Hand Landmarker
+   ↓
+Hand Landmark Detection
+   ↓
+Gesture Processing
+   ↓
+Gesture Interpretation
+   ↓
+Camera / UI Controls
+   ↓
+Three.js 3D Scene
